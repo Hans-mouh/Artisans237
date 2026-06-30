@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — Artisans237</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .legal { max-width: 720px; margin: 0 auto; padding: 40px 20px 60px; }
+  .legal h2 { margin-top: 28px; margin-bottom: 8px; font-size: 18px; }
+  .legal p, .legal li { color: var(--text-muted); font-size: 14px; }
+  .lang-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+  .lang-tabs button { padding: 8px 16px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; }
+  .lang-tabs button.active { background: var(--accent); color: #F2F4F8; border-color: var(--accent); }
+  .lang-block { display: none; }
+  .lang-block.active { display: block; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand"><div class="logo-slot"><img src="assets/logo.png" alt="logo" onerror="this.style.display='none'; this.parentElement.textContent='LOGO';"></div><div class="brand-name">Artisans<span>237</span></div></div>
+  <nav class="main-nav">
+    <a href="index.html" data-i18n="nav_home">Home</a>
+    <a href="providers.html" data-i18n="nav_find">Find a service</a>
+  </nav>
+  <div class="header-actions"><div class="lang-toggle"><button data-lang="fr" onclick="setLang('fr')">FR</button><button data-lang="en" onclick="setLang('en')">EN</button></div></div>
+</header>
+
+<div class="legal">
+  <h1>Privacy Policy</h1>
+  <p style="margin-top:6px;">Last updated: [DATE]</p>
+
+  <div class="lang-tabs">
+    <button class="active" data-lang="en">English</button>
+    <button data-lang="fr">Français</button>
+  </div>
+
+  <div class="lang-block active" data-lang="en">
+    <h2>1. Introduction</h2>
+    <p>This Policy explains how Artisans237 collects, uses, stores, and protects information about Customers, Providers, and visitors.</p>
+    <h2>2. Information We Collect</h2>
+    <p>Account info (name, phone, email, hashed password, role), location (town/quarter), Provider trade category and trial/subscription status, MTN MoMo transaction references (not your PIN), and basic usage data.</p>
+    <h2>3. How We Use It</h2>
+    <p>To run your account and dashboard, match Customers with nearby Providers, process manual payments and trial periods, verify your email, detect fraud, and improve the Platform.</p>
+    <h2>4. How We Share It</h2>
+    <p>Between matched Customers and Providers (contact + location, only after a request is accepted), with payment-related communication where relevant, or if required by Cameroonian law. We do not sell your personal data.</p>
+    <h2>5. Storage and Security</h2>
+    <p>Data is stored in a SQLite database on our hosting provider. Passwords are hashed; sessions use JWTs. No system is 100% secure.</p>
+    <h2>6. Data Retention</h2>
+    <p>We retain data while your account is active, and as needed afterward for legal/accounting purposes. You may request deletion, subject to legal record-keeping limits.</p>
+    <h2>7. Your Rights</h2>
+    <p>You may request a copy of your data, request correction, request deletion, or withdraw consent for non-essential communications — contact [support email].</p>
+    <h2>8. Children's Privacy</h2>
+    <p>Artisans237 is not intended for use by individuals under 18.</p>
+    <h2>9. Cookies and Local Storage</h2>
+    <p>Used to keep you logged in and remember your language preference. If Artisans237 runs advertising (for example, via Meta/Facebook Pixel), an additional cookie may be used to measure which ads led to a visit and to help show relevant ads to people likely to be interested in our services. This Policy will be updated with the specific tool's name before it goes live, and you can decline non-essential cookies through your browser settings at any time.</p>
+    <h2>10. Changes</h2>
+    <p>Material changes will be announced on the Platform.</p>
+    <h2>11. Governing Law</h2>
+    <p>Governed by the laws of the Republic of Cameroon, including applicable cybersecurity/cybercrime provisions.</p>
+    <h2>12. Contact</h2>
+    <p>[support email]</p>
+  </div>
+
+  <div class="lang-block" data-lang="fr">
+    <h2>1. Introduction</h2>
+    <p>Cette Politique explique comment Artisans237 collecte, utilise, stocke et protège les informations des Clients, Prestataires et visiteurs.</p>
+    <h2>2. Informations Collectées</h2>
+    <p>Infos de compte (nom, téléphone, email, mot de passe haché, rôle), localisation (ville/quartier), catégorie de métier et statut d'essai/abonnement du Prestataire, références de transaction MTN MoMo (pas votre code PIN), et données d'utilisation de base.</p>
+    <h2>3. Utilisation</h2>
+    <p>Pour gérer votre compte et tableau de bord, mettre en relation Clients et Prestataires proches, traiter les paiements manuels et périodes d'essai, vérifier votre email, détecter la fraude, et améliorer la Plateforme.</p>
+    <h2>4. Partage</h2>
+    <p>Entre Clients et Prestataires mis en relation (coordonnées + localisation, uniquement après acceptation d'une demande), pour les communications liées au paiement, ou si la loi camerounaise l'exige. Nous ne vendons pas vos données.</p>
+    <h2>5. Stockage et Sécurité</h2>
+    <p>Les données sont stockées dans une base SQLite chez notre hébergeur. Les mots de passe sont hachés ; les sessions utilisent des JWT. Aucun système n'est sécurisé à 100%.</p>
+    <h2>6. Conservation</h2>
+    <p>Nous conservons les données tant que votre compte est actif, et au-delà si nécessaire pour des raisons légales/comptables. Vous pouvez demander la suppression, sous réserve des obligations légales.</p>
+    <h2>7. Vos Droits</h2>
+    <p>Vous pouvez demander une copie de vos données, leur correction, leur suppression, ou retirer votre consentement — contactez [email de support].</p>
+    <h2>8. Confidentialité des Mineurs</h2>
+    <p>Artisans237 n'est pas destiné aux personnes de moins de 18 ans.</p>
+    <h2>9. Cookies et Stockage Local</h2>
+    <p>Utilisés pour maintenir votre connexion et mémoriser votre langue préférée. Si Artisans237 diffuse de la publicité (par exemple via le Pixel Meta/Facebook), un cookie supplémentaire pourra être utilisé pour mesurer quelles publicités ont conduit à une visite et pour aider à montrer des publicités pertinentes aux personnes susceptibles d'être intéressées par nos services. Cette Politique sera mise à jour avec le nom de l'outil spécifique avant sa mise en service, et vous pouvez refuser les cookies non essentiels via les paramètres de votre navigateur à tout moment.</p>
+    <h2>10. Modifications</h2>
+    <p>Les changements importants seront annoncés sur la Plateforme.</p>
+    <h2>11. Droit Applicable</h2>
+    <p>Régi par les lois de la République du Cameroun, y compris les dispositions applicables en matière de cybersécurité/cybercriminalité.</p>
+    <h2>12. Contact</h2>
+    <p>[email de support]</p>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <a href="terms.html" data-i18n="footer_terms">Terms of Service</a> · <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+</footer>
+
+<script src="js/i18n.js"></script>
+<script>
+  document.querySelectorAll('.lang-tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.lang-tabs button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.lang-block').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelector(`.lang-block[data-lang="${btn.dataset.lang}"]`).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

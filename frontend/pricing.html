@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarifs prestataires — Artisans237</title>
+<meta name="description" content="Essai gratuit pour les nouveaux prestataires sur Artisans237, puis abonnement simple via MTN Mobile Money. Aucuns frais cachés.">
+<link rel="canonical" href="https://frontend237.netlify.app/pricing.html">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <div class="logo-slot"><img src="assets/logo.png" alt="logo" onerror="this.style.display='none'; this.parentElement.textContent='LOGO';"></div>
+    <div class="brand-name">Artisans<span>237</span></div>
+  </div>
+  <nav class="main-nav">
+    <a href="index.html" data-i18n="nav_home">Home</a>
+    <a href="providers.html" data-i18n="nav_find">Find a service</a>
+    <a href="pricing.html" data-i18n="nav_pricing">Pro pricing</a>
+  </nav>
+  <div class="header-actions"><div class="lang-toggle"><button data-lang="fr" onclick="setLang('fr')">FR</button><button data-lang="en" onclick="setLang('en')">EN</button></div>
+    <a href="register.html?role=provider" class="btn btn-primary" data-i18n="pricing_register_btn">Register as a provider</a>
+  </div>
+</header>
+
+<section class="section container" style="max-width:680px; margin:0 auto;">
+  <h2 class="section-title" data-i18n="pricing_title">Simple, fair pricing</h2>
+  <p class="section-sub" data-i18n="pricing_sub">No surprise fees. Pay only once your free trial ends, and only via MTN Mobile Money.</p>
+
+  <div class="card" style="margin:0 0 24px;">
+    <h3 style="margin-bottom:14px;" data-i18n="pricing_trial_h">Free trial</h3>
+    <p style="color:var(--text-muted); font-size:14px;" id="trialText">Loading…</p>
+  </div>
+
+  <div class="card" style="margin:0;">
+    <h3 style="margin-bottom:14px;" data-i18n="pricing_after_h">After your trial</h3>
+    <p style="color:var(--text-muted); font-size:14px; margin-bottom:14px;" id="subText">Loading…</p>
+    <p style="background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:10px 14px; font-weight:600;" id="momoLine"></p>
+    <p style="color:var(--text-muted); font-size:13px; margin-top:14px;" data-i18n="pricing_note">
+      Send your payment, then submit the MTN confirmation reference from your provider dashboard. An admin reviews and confirms it — usually the same day.
+    </p>
+  </div>
+
+  <p style="text-align:center; margin-top:32px;">
+    <a href="register.html?role=provider" class="btn btn-primary" data-i18n="pricing_cta">Start your free trial</a>
+  </p>
+</section>
+
+<footer class="site-footer">
+  <a href="terms.html" data-i18n="footer_terms">Terms of Service</a> · <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+</footer>
+
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+<script>
+  let plan = null;
+
+  function renderPlan(lang) {
+    if (!plan) return;
+    document.getElementById('trialText').textContent = t('pricing_trial_text', { days: plan.trialDays });
+    document.getElementById('subText').textContent = t('pricing_sub_text', { amount: plan.subscriptionFcfa, days: plan.subscriptionDays });
+    document.getElementById('momoLine').textContent = t('pricing_momo_line', { number: plan.momoNumber });
+  }
+
+  window.onLangChange = function(lang) { renderPlan(lang); };
+
+  apiFetch('/payments/plan').then(p => {
+    plan = p;
+    renderPlan(getLang());
+  }).catch(() => {
+    document.getElementById('trialText').textContent = t('pricing_load_error');
+  });
+</script>
+</body>
+</html>

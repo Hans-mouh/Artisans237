@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard-customer.html
+Disallow: /dashboard-provider.html
+Disallow: /dashboard-admin.html
+
+Sitemap: https://frontend237.netlify.app/sitemap.xml

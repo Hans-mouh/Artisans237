@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Créer un compte — Artisans237</title>
+<meta name="description" content="Créez un compte client pour trouver un artisan, ou inscrivez votre métier comme prestataire sur Artisans237 avec un essai gratuit.">
+<link rel="canonical" href="https://frontend237.netlify.app/register.html">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <div class="logo-slot"><img src="assets/logo.png" alt="logo" onerror="this.style.display='none'; this.parentElement.textContent='LOGO';"></div>
+    <div class="brand-name">Artisans<span>237</span></div>
+  </div>
+  <nav class="main-nav">
+    <a href="index.html" data-i18n="nav_home">Home</a>
+    <a href="providers.html" data-i18n="nav_find">Find a service</a>
+    <a href="pricing.html" data-i18n="nav_pricing">Pro pricing</a>
+  </nav>
+  <div class="header-actions"><div class="lang-toggle"><button data-lang="fr" onclick="setLang('fr')">FR</button><button data-lang="en" onclick="setLang('en')">EN</button></div></div>
+</header>
+
+<div class="card">
+  <h2 style="margin-bottom:6px;" data-i18n="reg_title">Create your account</h2>
+  <p style="color:var(--text-muted); font-size:13px; margin-bottom:20px;" data-i18n="reg_sub">
+    Customers find help. Providers get listed — with a free <span id="trialDaysLabel">14</span>-day trial before any subscription is due.
+  </p>
+
+  <div class="form-group">
+    <label data-i18n="reg_role_label">I am a...</label>
+    <select id="role">
+      <option value="customer" data-i18n="reg_role_customer">Customer (looking for a service)</option>
+      <option value="provider" data-i18n="reg_role_provider">Service Provider (offering a trade)</option>
+    </select>
+  </div>
+
+  <form id="registerForm">
+    <div class="form-group"><label data-i18n="reg_fullname">Full name</label><input type="text" id="fullName" required></div>
+    <div class="form-group"><label data-i18n="reg_phone">Phone number</label><input type="tel" id="phone" required placeholder="6XXXXXXXX"></div>
+    <div class="form-group"><label data-i18n="reg_email">Email address</label><input type="email" id="email" required></div>
+    <div class="form-group"><label data-i18n="reg_password">Password</label><input type="password" id="password" required minlength="6"></div>
+
+    <div id="providerFields" style="display:none;">
+      <div class="form-group">
+        <label data-i18n="reg_trade">Your trade / category</label>
+        <select id="category"></select>
+        <input type="text" id="customCategory" data-i18n-placeholder="reg_trade_placeholder" style="display:none; margin-top:8px;" placeholder="Type your trade (e.g. Welder, Hairdresser)">
+      </div>
+      <div class="form-group"><label data-i18n="reg_bio">Short bio (optional)</label><textarea id="bio" rows="2" data-i18n-placeholder="reg_bio_placeholder" placeholder="e.g. 8 years experience, available evenings"></textarea></div>
+    </div>
+
+    <div class="form-group">
+      <label data-i18n="reg_town">Town</label>
+      <select id="town" required></select>
+    </div>
+    <div class="form-group">
+      <label data-i18n="reg_quarter">Neighborhood</label>
+      <select id="quarter" required></select>
+      <input type="text" id="quarterOther" data-i18n-placeholder="reg_quarter_placeholder" style="display:none; margin-top:8px;" placeholder="Type your area">
+    </div>
+
+    <div id="formError" class="error-msg"></div>
+    <div id="formSuccess" class="success-msg"></div>
+
+    <button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;" data-i18n="reg_submit">Create account</button>
+  </form>
+  <p style="text-align:center; margin-top:16px; font-size:13px; color:var(--text-muted);">
+    <span data-i18n="reg_have_account">Already have an account?</span> <a href="login.html" data-i18n="nav_login">Log in</a>
+  </p>
+</div>
+
+<footer class="site-footer">
+  <a href="terms.html" data-i18n="footer_terms">Terms of Service</a> · <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+</footer>
+
+<script src="js/towns-data.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('role') === 'provider') {
+    document.getElementById('role').value = 'provider';
+  }
+
+  function toggleProviderFields() {
+    document.getElementById('providerFields').style.display =
+      document.getElementById('role').value === 'provider' ? 'block' : 'none';
+  }
+  document.getElementById('role').addEventListener('change', toggleProviderFields);
+  toggleProviderFields();
+
+  // Self-contained fallback (register.html doesn't load categories.js) so the
+  // dropdown — and the crucial "Other" option — always works even if the
+  // categories API is briefly unreachable.
+  const FALLBACK_CATEGORIES = [
+    { id: 'plumber', label_en: 'Plumber', label_fr: 'Plombier' },
+    { id: 'electrician', label_en: 'Electrician', label_fr: 'Électricien' },
+    { id: 'mechanic', label_en: 'Mechanic', label_fr: 'Mécanicien' },
+    { id: 'carpenter', label_en: 'Carpenter', label_fr: 'Menuisier' },
+    { id: 'painter', label_en: 'Painter', label_fr: 'Peintre' },
+    { id: 'cleaner', label_en: 'Cleaner', label_fr: 'Agent de nettoyage' },
+    { id: 'mason', label_en: 'Mason', label_fr: 'Maçon' },
+    { id: 'tailor', label_en: 'Tailor', label_fr: 'Tailleur' },
+  ];
+
+  let lastCats = null; // cached so the language toggle can re-render labels without re-fetching
+
+  function renderCategoryOptions(lang) {
+    const sel = document.getElementById('category');
+    const previousValue = sel.value;
+    sel.innerHTML = '';
+    const list = lastCats || FALLBACK_CATEGORIES;
+    list.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.custom ? c.id : (lang === 'fr' ? c.label_fr : c.label_en);
+      sel.appendChild(opt);
+    });
+    const otherOpt = document.createElement('option');
+    otherOpt.value = '__other__';
+    otherOpt.textContent = t('cat_other');
+    sel.appendChild(otherOpt);
+    if (previousValue) sel.value = previousValue;
+  }
+
+  apiFetch('/providers/categories').then(cats => {
+    lastCats = cats;
+    renderCategoryOptions(getLang());
+  }).catch(() => {
+    renderCategoryOptions(getLang());
+  });
+
+  window.onLangChange = function(lang) {
+    renderCategoryOptions(lang);
+  };
+
+  document.getElementById('category').addEventListener('change', (e) => {
+    document.getElementById('customCategory').style.display = e.target.value === '__other__' ? 'block' : 'none';
+  });
+
+  wireLocationDropdowns(document.getElementById('town'), document.getElementById('quarter'), document.getElementById('quarterOther'));
+
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl = document.getElementById('formError');
+    const okEl = document.getElementById('formSuccess');
+    errEl.textContent = ''; okEl.textContent = '';
+
+    const quarterVal = document.getElementById('quarter').value === '__other__'
+      ? document.getElementById('quarterOther').value
+      : document.getElementById('quarter').value;
+
+    const body = {
+      role: document.getElementById('role').value,
+      fullName: document.getElementById('fullName').value,
+      phone: document.getElementById('phone').value,
+      email: document.getElementById('email').value,
+      password: document.getElementById('password').value,
+      town: document.getElementById('town').value,
+      quarter: quarterVal,
+    };
+    if (body.role === 'provider') {
+      body.category = document.getElementById('category').value;
+      body.customCategory = document.getElementById('customCategory').value;
+      body.bio = document.getElementById('bio').value;
+    }
+
+    try {
+      const result = await apiFetch('/auth/register', { method: 'POST', body: JSON.stringify(body) });
+      okEl.textContent = result.message;
+      document.getElementById('registerForm').reset();
+    } catch (err) {
+      errEl.textContent = err.message;
+    }
+  });
+</script>
+</body>
+</html>

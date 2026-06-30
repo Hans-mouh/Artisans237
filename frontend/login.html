@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in — Artisans237</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <div class="logo-slot"><img src="assets/logo.png" alt="logo" onerror="this.style.display='none'; this.parentElement.textContent='LOGO';"></div>
+    <div class="brand-name">Artisans<span>237</span></div>
+  </div>
+  <nav class="main-nav">
+    <a href="index.html" data-i18n="nav_home">Home</a>
+    <a href="providers.html" data-i18n="nav_find">Find a service</a>
+    <a href="pricing.html" data-i18n="nav_pricing">Pro pricing</a>
+  </nav>
+  <div class="header-actions"><div class="lang-toggle"><button data-lang="fr" onclick="setLang('fr')">FR</button><button data-lang="en" onclick="setLang('en')">EN</button></div></div>
+</header>
+
+<div class="card">
+  <h2 style="margin-bottom:20px;" data-i18n="login_title">Log in</h2>
+  <form id="loginForm">
+    <div class="form-group"><label data-i18n="login_email">Email</label><input type="email" id="email" required></div>
+    <div class="form-group"><label data-i18n="login_password">Password</label><input type="password" id="password" required></div>
+    <div id="formError" class="error-msg"></div>
+    <button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;" data-i18n="login_submit">Log in</button>
+  </form>
+  <p style="text-align:center; margin-top:16px; font-size:13px; color:var(--text-muted);">
+    <span data-i18n="login_no_account">No account?</span> <a href="register.html" data-i18n="login_create_one">Create one</a>
+  </p>
+</div>
+
+<footer class="site-footer">
+  <a href="terms.html" data-i18n="footer_terms">Terms of Service</a> · <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+</footer>
+
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl = document.getElementById('formError');
+    errEl.textContent = '';
+    try {
+      const result = await apiFetch('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: document.getElementById('email').value,
+          password: document.getElementById('password').value,
+        }),
+      });
+      setSession(result.token, result.user);
+      const next = new URLSearchParams(window.location.search).get('next');
+      if (next) { window.location.href = next; return; }
+      const dest = result.user.role === 'provider' ? 'dashboard-provider.html'
+                 : result.user.role === 'admin' ? 'dashboard-admin.html'
+                 : 'dashboard-customer.html';
+      window.location.href = dest;
+    } catch (err) {
+      errEl.textContent = err.message;
+    }
+  });
+</script>
+</body>
+</html>

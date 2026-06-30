@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trouver un prestataire — Artisans237</title>
+<meta name="description" content="Parcourez les plombiers, électriciens, mécaniciens et autres artisans vérifiés inscrits sur Artisans237, filtrés par ville et quartier au Cameroun.">
+<link rel="canonical" href="https://frontend237.netlify.app/providers.html">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <div class="logo-slot"><img src="assets/logo.png" alt="logo" onerror="this.style.display='none'; this.parentElement.textContent='LOGO';"></div>
+    <div class="brand-name">Artisans<span>237</span></div>
+  </div>
+  <nav class="main-nav">
+    <a href="index.html" data-i18n="nav_home">Home</a>
+    <a href="providers.html" data-i18n="nav_find">Find a service</a>
+    <a href="pricing.html" data-i18n="nav_pricing">Pro pricing</a>
+  </nav>
+  <div class="header-actions"><div class="lang-toggle"><button data-lang="fr" onclick="setLang('fr')">FR</button><button data-lang="en" onclick="setLang('en')">EN</button></div>
+    <a href="register.html?role=provider" class="btn btn-outline" data-i18n="nav_become">Become a provider</a>
+  </div>
+</header>
+
+<section class="section container">
+  <h2 class="section-title" data-i18n="prov_title">Providers</h2>
+  <p class="section-sub" id="filterSummary">Showing all registered providers.</p>
+
+  <div class="hero-search" style="margin-bottom:24px; max-width:none;">
+    <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" fill="none"><circle cx="11" cy="11" r="7" stroke="#8C93A3" stroke-width="2"/><path d="M20 20 L16.5 16.5" stroke="#8C93A3" stroke-width="2" stroke-linecap="round"/></svg>
+    <input type="text" id="filterQuery" data-i18n-placeholder="hero_query_ph" placeholder="Search for a trade, name, or skill...">
+    <select id="filterCategory" class="hero-search-select"><option value="" data-i18n="hero_cat_all">All categories</option></select>
+    <select id="filterTown" class="hero-search-select"><option value="" data-i18n="hero_town_any">Any town</option></select>
+    <select id="filterQuarter" class="hero-search-select"><option value="" data-i18n="hero_quarter_any">Any neighborhood</option></select>
+    <button class="search-submit-btn" id="applyFilters" aria-label="Search">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><circle cx="11" cy="11" r="7" stroke="#fff" stroke-width="2"/><path d="M20 20 L16.5 16.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <div class="provider-list" id="providerList">
+    <p style="color:var(--text-muted);" data-i18n="prov_loading">Loading providers…</p>
+  </div>
+</section>
+
+<!-- Request modal -->
+<div id="requestModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; z-index:100;">
+  <div class="card" style="width:90%;">
+    <h3 style="margin-bottom:16px;" data-i18n="prov_modal_title">Request this service</h3>
+    <form id="requestForm">
+      <input type="hidden" id="reqCategory">
+      <div class="form-group">
+        <label data-i18n="prov_modal_desc">Your description (optional)</label>
+        <textarea id="reqDescription" rows="3" data-i18n-placeholder="prov_modal_desc_ph" placeholder="e.g. Leaking kitchen pipe, need same-day visit"></textarea>
+      </div>
+      <div class="form-group">
+        <label data-i18n="prov_modal_phone">Your phone (so the provider can reach you)</label>
+        <input type="tel" id="reqPhone" required placeholder="6XXXXXXXX">
+      </div>
+      <div class="form-group">
+        <label data-i18n="prov_modal_whatsapp">WhatsApp number (optional)</label>
+        <input type="tel" id="reqWhatsapp" placeholder="6XXXXXXXX">
+      </div>
+      <div class="form-group">
+        <label data-i18n="prov_modal_town">Town</label>
+        <select id="reqTown" required></select>
+      </div>
+      <div class="form-group">
+        <label data-i18n="prov_modal_quarter">Neighborhood</label>
+        <select id="reqQuarter" required></select>
+        <input type="text" id="reqQuarterOther" data-i18n-placeholder="prov_modal_quarter_ph" style="display:none; margin-top:8px;" placeholder="Type your area">
+      </div>
+      <div id="reqError" class="error-msg"></div>
+      <div id="reqSuccess" class="success-msg"></div>
+      <button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;" data-i18n="prov_modal_submit">Post request</button>
+      <button type="button" class="btn btn-outline" id="closeModal" style="width:100%; margin-top:8px;" data-i18n="prov_modal_cancel">Cancel</button>
+    </form>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <a href="terms.html" data-i18n="footer_terms">Terms of Service</a> · <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+</footer>
+
+<script src="js/towns-data.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  let currentCategory = params.get('category') || '';
+  let currentTown = params.get('town') || '';
+  let currentQuarter = params.get('quarter') || '';
+  let currentQuery = params.get('q') || '';
+  document.getElementById('filterQuery').value = currentQuery;
+  let lastCats = null; // cached category list so language toggle can relabel without re-fetching
+  let lastProviders = null; // cached provider results, same reason
+
+  function categoryLabel(catId, lang) {
+    const found = (lastCats || []).find(c => c.id === catId);
+    if (!found) return catId;
+    return found.custom ? found.id : (lang === 'fr' ? found.label_fr : found.label_en);
+  }
+
+  function renderCategoryFilterOptions(lang) {
+    const sel = document.getElementById('filterCategory');
+    const prevValue = sel.value || currentCategory;
+    sel.innerHTML = `<option value="">${t('hero_cat_all')}</option>`;
+    (lastCats || []).forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.custom ? c.id : (lang === 'fr' ? c.label_fr : c.label_en);
+      sel.appendChild(opt);
+    });
+    if (prevValue) sel.value = prevValue;
+  }
+
+  function loadCategories() {
+    apiFetch('/providers/categories').then(cats => {
+      lastCats = cats;
+      renderCategoryFilterOptions(getLang());
+    }).catch(() => {});
+  }
+
+  function renderFilterSummary(lang) {
+    const summaryEl = document.getElementById('filterSummary');
+    if (!currentCategory && !currentTown && !currentQuarter && !currentQuery) {
+      summaryEl.textContent = t('prov_showing_all');
+      return;
+    }
+    let text = t('prov_showing_filtered');
+    if (currentQuery) text += ` "${currentQuery}"`;
+    if (currentCategory) text += ' — ' + categoryLabel(currentCategory, lang);
+    if (currentTown) text += ` ${t('prov_in')} ${currentTown}`;
+    if (currentQuarter) text += `, ${currentQuarter}`;
+    summaryEl.textContent = text + '.';
+  }
+
+  function renderProviderList(lang) {
+    const list = document.getElementById('providerList');
+    if (!lastProviders) return;
+    if (lastProviders.length === 0) {
+      list.innerHTML = `<p style="color:var(--text-muted);">${t('prov_none_found')}</p>`;
+      return;
+    }
+    list.innerHTML = lastProviders.map(p => `
+      <div class="provider-card">
+        <div>
+          <div class="name">${p.name} ${p.verified ? `<span class="badge badge-verified">${t('badge_verified')}</span>` : ''} ${p.activeStatus === 'trial' ? `<span class="badge badge-trial">${t('badge_trial')}</span>` : ''}</div>
+          <div class="meta">${categoryLabel(p.category, lang)} · ${p.customLocation || (p.quarter + ', ' + p.town)}</div>
+          ${p.avgRating ? `<div class="meta rating-line">★ ${p.avgRating} (${p.reviewCount} ${t('reviews_count_label')})</div>` : ''}
+          ${p.bio ? `<div class="meta">${p.bio}</div>` : ''}
+        </div>
+        <button class="btn btn-primary" onclick="openRequestModal('${p.category}')">${t('prov_request_btn')}</button>
+      </div>
+    `).join('');
+  }
+
+  function loadProviders() {
+    const qs = new URLSearchParams();
+    if (currentCategory) qs.set('category', currentCategory);
+    if (currentTown) qs.set('town', currentTown);
+    if (currentQuarter) qs.set('quarter', currentQuarter);
+    if (currentQuery) qs.set('q', currentQuery);
+
+    renderFilterSummary(getLang());
+
+    apiFetch('/providers?' + qs.toString()).then(providers => {
+      lastProviders = providers;
+      renderProviderList(getLang());
+    }).catch(err => {
+      document.getElementById('providerList').innerHTML = `<p class="error-msg">${err.message}</p>`;
+    });
+  }
+
+  window.onLangChange = function(lang) {
+    renderCategoryFilterOptions(lang);
+    renderFilterSummary(lang);
+    renderProviderList(lang);
+  };
+
+  function openRequestModal(category) {
+    if (!getUser()) {
+      window.location.href = 'login.html?next=providers.html';
+      return;
+    }
+    document.getElementById('reqCategory').value = category;
+    document.getElementById('requestModal').style.display = 'flex';
+  }
+  document.getElementById('closeModal').addEventListener('click', () => {
+    document.getElementById('requestModal').style.display = 'none';
+  });
+
+  document.getElementById('filterCategory').addEventListener('change', e => { currentCategory = e.target.value; loadProviders(); });
+  wireLocationDropdowns(document.getElementById('filterTown'), document.getElementById('filterQuarter'));
+  document.getElementById('filterTown').addEventListener('change', e => { currentTown = e.target.value; });
+  document.getElementById('filterQuarter').addEventListener('change', e => { currentQuarter = e.target.value === '__other__' ? '' : e.target.value; });
+  document.getElementById('filterQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { currentQuery = e.target.value.trim(); loadProviders(); } });
+  document.getElementById('applyFilters').addEventListener('click', () => {
+    currentQuery = document.getElementById('filterQuery').value.trim();
+    loadProviders();
+  });
+
+  wireLocationDropdowns(document.getElementById('reqTown'), document.getElementById('reqQuarter'), document.getElementById('reqQuarterOther'));
+
+  document.getElementById('requestForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl = document.getElementById('reqError');
+    const okEl = document.getElementById('reqSuccess');
+    errEl.textContent = ''; okEl.textContent = '';
+
+    const quarterVal = document.getElementById('reqQuarter').value === '__other__'
+      ? document.getElementById('reqQuarterOther').value
+      : document.getElementById('reqQuarter').value;
+
+    try {
+      await apiFetch('/requests', {
+        method: 'POST',
+        body: JSON.stringify({
+          category: document.getElementById('reqCategory').value,
+          description: document.getElementById('reqDescription').value,
+          contactPhone: document.getElementById('reqPhone').value,
+          contactWhatsapp: document.getElementById('reqWhatsapp').value,
+          town: document.getElementById('reqTown').value,
+          quarter: quarterVal,
+        }),
+      });
+      okEl.textContent = t('prov_request_posted');
+      setTimeout(() => { document.getElementById('requestModal').style.display = 'none'; }, 1800);
+    } catch (err) {
+      errEl.textContent = err.message;
+    }
+  });
+
+  loadCategories();
+  loadProviders();
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify your email — Artisans237</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <div class="logo-slot"><img src="assets/logo.png" alt="logo" onerror="this.style.display='none'; this.parentElement.textContent='LOGO';"></div>
+    <div class="brand-name">Artisans<span>237</span></div>
+  </div>
+  <nav class="main-nav"><a href="index.html" data-i18n="nav_home">Home</a></nav>
+  <div class="header-actions"><div class="lang-toggle"><button data-lang="fr" onclick="setLang('fr')">FR</button><button data-lang="en" onclick="setLang('en')">EN</button></div></div>
+</header>
+
+<div class="card" style="text-align:center; max-width:480px; margin:60px auto;">
+  <div id="statusIcon" style="font-size:48px; margin-bottom:16px;">⏳</div>
+  <h2 id="statusTitle" style="margin-bottom:12px;">Vérification en cours…</h2>
+  <p id="statusMsg" style="color:var(--text-muted); font-size:14px; margin-top:8px; line-height:1.6;"></p>
+  <a href="login.html" class="btn btn-primary" id="loginLink" style="display:none; margin-top:20px;" data-i18n="nav_login">Log in</a>
+</div>
+
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const token = new URLSearchParams(window.location.search).get('token');
+
+  if (!token) {
+    document.getElementById('statusIcon').textContent = 'ℹ️';
+    document.getElementById('statusTitle').style.color = 'var(--text-muted)';
+    document.getElementById('statusTitle').textContent = 'Lien incomplet / Incomplete link';
+    document.getElementById('statusMsg').textContent =
+      'Si vous testez en local: l\'envoi d\'emails est désactivé — activez les comptes manuellement depuis le tableau de bord admin.\n\nIf testing locally: email sending is off — activate accounts manually from the admin dashboard.';
+  } else {
+    fetch('/api/auth/verify-email?token=' + token)
+      .then(function(r) { return r.json().then(function(data) { return { ok: r.ok, data: data }; }); })
+      .then(function(result) {
+        var icon = document.getElementById('statusIcon');
+        var title = document.getElementById('statusTitle');
+        var msg = document.getElementById('statusMsg');
+        if (result.ok) {
+          icon.textContent = '✅';
+          title.style.color = 'var(--accent-2)';
+          title.textContent = 'Email vérifié ! / Email verified!';
+          msg.textContent = result.data.message || 'Votre adresse email a bien été vérifiée.';
+          document.getElementById('loginLink').style.display = 'inline-block';
+        } else {
+          icon.textContent = '⚠️';
+          title.style.color = 'var(--accent)';
+          title.textContent = 'Lien expiré / Expired link';
+          msg.textContent = result.data.error || 'Ce lien a expiré ou a déjà été utilisé. Veuillez vous réinscrire ou contacter le support.';
+        }
+      })
+      .catch(function() {
+        document.getElementById('statusIcon').textContent = '⚠️';
+        document.getElementById('statusTitle').style.color = 'var(--accent)';
+        document.getElementById('statusTitle').textContent = 'Connexion impossible / Cannot connect';
+        document.getElementById('statusMsg').textContent = 'Le serveur ne répond pas. Assurez-vous que le backend tourne sur le port 8080. / Make sure the backend is running on port 8080.';
+      });
+  }
+</script>
+</body>
+</html>

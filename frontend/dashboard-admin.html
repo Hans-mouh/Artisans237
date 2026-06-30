@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin dashboard — Artisans237</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <div class="logo-slot"><img src="assets/logo.png" alt="logo" onerror="this.style.display='none'; this.parentElement.textContent='LOGO';"></div>
+    <div class="brand-name">Artisans<span>237</span> <span style="font-size:12px; color:var(--text-muted);">admin</span></div>
+  </div>
+  <nav class="main-nav">
+    <a href="index.html" data-i18n="nav_home">Home</a>
+    <a href="providers.html" data-i18n="nav_find">Find a service</a>
+    <a href="pricing.html" data-i18n="nav_pricing">Pro pricing</a>
+  </nav>
+  <div class="header-actions"><div class="lang-toggle"><button data-lang="fr" onclick="setLang('fr')">FR</button><button data-lang="en" onclick="setLang('en')">EN</button></div><a href="#" id="logoutLink" class="btn btn-outline" data-i18n="nav_logout">Log out</a></div>
+</header>
+
+<section class="section container">
+  <h2 class="section-title" data-i18n="dash_admin_title">Admin dashboard</h2>
+  <p class="section-sub" data-i18n="dash_admin_sub">Overview of activity on the platform.</p>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="num" id="statTotal">0</div><div class="stat-label" data-i18n="dash_admin_total">Total requests</div></div>
+    <div class="stat-card"><div class="num" id="statPending">0</div><div class="stat-label" data-i18n="dash_admin_pending">Pending</div></div>
+    <div class="stat-card"><div class="num" id="statAccepted">0</div><div class="stat-label" data-i18n="dash_admin_accepted">Accepted</div></div>
+    <div class="stat-card"><div class="num fcfa" id="statVolume">0 FCFA</div><div class="stat-label" data-i18n="dash_admin_volume">Volume processed</div></div>
+  </div>
+
+  <h3 style="margin-bottom:14px;" data-i18n="dash_admin_pending_payments">Pending MTN MoMo payments</h3>
+  <div class="provider-list" id="pendingPayments" style="margin-bottom:32px;"><p style="color:var(--text-muted);" data-i18n="prov_loading">Loading…</p></div>
+
+  <h3 style="margin-bottom:14px;" data-i18n="dash_admin_recent_requests">Recent requests</h3>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr><th data-i18n="th_customer">Customer</th><th data-i18n="th_provider">Provider</th><th data-i18n="th_service">Service</th><th data-i18n="th_date">Date</th><th data-i18n="th_status">Status</th></tr>
+      </thead>
+      <tbody id="transactionsBody"><tr><td colspan="5" class="table-empty" data-i18n="prov_loading">Loading…</td></tr></tbody>
+    </table>
+  </div>
+
+  <h3 style="margin-bottom:14px;" data-i18n="dash_admin_registered_providers">Registered providers</h3>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr><th data-i18n="th_name">Name</th><th data-i18n="th_trade">Trade</th><th data-i18n="th_quarter">Quarter</th><th data-i18n="th_phone">Phone</th><th data-i18n="th_verified">Verified</th><th></th></tr>
+      </thead>
+      <tbody id="providersBody"><tr><td colspan="6" class="table-empty" data-i18n="prov_loading">Loading…</td></tr></tbody>
+    </table>
+  </div>
+
+  <h3 style="margin-bottom:14px;" data-i18n="dash_admin_support_title">Support messages</h3>
+  <div class="provider-list" id="supportList" style="margin-bottom:32px;"><p style="color:var(--text-muted);" data-i18n="prov_loading">Loading…</p></div>
+
+  <h3 style="margin-bottom:14px;" data-i18n="dash_admin_reviews_title">Pending reviews</h3>
+  <div class="provider-list" id="reviewsList" style="margin-bottom:32px;"><p style="color:var(--text-muted);" data-i18n="prov_loading">Loading…</p></div>
+
+  <h3 style="margin: 32px 0 14px;" data-i18n="dash_admin_change_pw">Change your admin password</h3>
+  <div class="card" style="max-width:420px; margin:0;">
+    <form id="pwForm">
+      <div class="form-group"><label data-i18n="pw_current">Current password</label><input type="password" id="currentPassword" required></div>
+      <div class="form-group"><label data-i18n="pw_new">New password</label><input type="password" id="newPassword" required minlength="6"></div>
+      <div id="pwError" class="error-msg"></div>
+      <div id="pwSuccess" class="success-msg"></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;" data-i18n="pw_update_btn">Update password</button>
+    </form>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <a href="terms.html" data-i18n="footer_terms">Terms of Service</a> · <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+</footer>
+
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const user = requireLoginOrRedirect('admin');
+
+  document.getElementById('logoutLink').addEventListener('click', (e) => {
+    e.preventDefault(); clearSession(); window.location.href = 'index.html';
+  });
+
+  function loadStats() {
+    apiFetch('/admin/stats').then(s => {
+      document.getElementById('statTotal').textContent = s.totalRequests;
+      document.getElementById('statPending').textContent = s.pending;
+      document.getElementById('statAccepted').textContent = s.accepted;
+      document.getElementById('statVolume').textContent = s.volumeFcfa.toLocaleString() + ' FCFA';
+    }).catch(() => {});
+  }
+
+  let lastTransactions = null;
+  let lastPending = null;
+  let lastProviders = null;
+
+  function statusLabel(status) {
+    const map = { open: 'dash_admin_pending', accepted: 'status_accepted', completed: 'status_completed', cancelled: 'status_cancelled' };
+    return t(map[status] || status);
+  }
+
+  function renderTransactions() {
+    const body = document.getElementById('transactionsBody');
+    if (!lastTransactions) return;
+    if (lastTransactions.length === 0) {
+      body.innerHTML = `<tr><td colspan="5" class="table-empty">${t('no_requests_yet')}</td></tr>`;
+      return;
+    }
+    body.innerHTML = lastTransactions.map(r => `
+      <tr>
+        <td>${r.customer_name}</td>
+        <td>${r.provider_name || '—'}</td>
+        <td>${r.category}</td>
+        <td>${new Date(r.created_at).toLocaleDateString()}</td>
+        <td>${statusLabel(r.status)}</td>
+      </tr>
+    `).join('');
+  }
+
+  function loadTransactions() {
+    apiFetch('/admin/transactions').then(rows => {
+      lastTransactions = rows;
+      renderTransactions();
+    }).catch(() => {
+      document.getElementById('transactionsBody').innerHTML = `<tr><td colspan="5" class="table-empty">${t('could_not_load')}</td></tr>`;
+    });
+  }
+
+  function renderPending() {
+    const list = document.getElementById('pendingPayments');
+    if (!lastPending) return;
+    if (lastPending.length === 0) { list.innerHTML = `<p style="color:var(--text-muted);">${t('nothing_pending')}</p>`; return; }
+    list.innerHTML = lastPending.map(p => `
+      <div class="provider-card" id="pay-${p.id}">
+        <div>
+          <div class="name">${p.full_name} (${p.phone})</div>
+          <div class="meta">${t('ref_label')}: ${p.momo_reference} · ${t('from_label')}: ${p.momo_payer_number} · ${p.amount_fcfa} FCFA</div>
+        </div>
+        <div>
+          <button class="btn btn-primary" onclick="confirmPayment(${p.id})">${t('btn_confirm')}</button>
+          <button class="btn btn-outline" onclick="rejectPayment(${p.id})">${t('btn_reject')}</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function loadPending() {
+    apiFetch('/payments/pending').then(rows => {
+      lastPending = rows;
+      renderPending();
+    });
+  }
+
+  async function confirmPayment(id) {
+    await apiFetch(`/payments/${id}/confirm`, { method: 'POST' });
+    document.getElementById('pay-' + id).remove();
+    loadStats();
+  }
+  async function rejectPayment(id) {
+    await apiFetch(`/payments/${id}/reject`, { method: 'POST', body: JSON.stringify({}) });
+    document.getElementById('pay-' + id).remove();
+  }
+  window.confirmPayment = confirmPayment;
+  window.rejectPayment = rejectPayment;
+
+  function renderProviders() {
+    const body = document.getElementById('providersBody');
+    if (!lastProviders) return;
+    if (lastProviders.length === 0) {
+      body.innerHTML = `<tr><td colspan="6" class="table-empty">${t('no_providers_yet')}</td></tr>`;
+      return;
+    }
+    body.innerHTML = lastProviders.map(p => `
+      <tr id="prov-${p.id}">
+        <td>${p.full_name}</td>
+        <td>${p.category}</td>
+        <td>${p.quarter || '—'}, ${p.town || '—'}</td>
+        <td>${p.phone}</td>
+        <td>${p.is_verified ? `<span class="badge badge-verified">${t('badge_verified')}</span>` : '—'}</td>
+        <td><button class="btn ${p.is_verified ? 'btn-outline' : 'btn-primary'}" style="padding:6px 12px; font-size:12px;" onclick="toggleVerify(${p.id}, ${p.is_verified})">${p.is_verified ? t('btn_unverify') : t('btn_verify')}</button></td>
+      </tr>
+    `).join('');
+  }
+
+  function loadProviders() {
+    apiFetch('/admin/providers').then(rows => {
+      lastProviders = rows;
+      renderProviders();
+    });
+  }
+
+  async function toggleVerify(id, isVerified) {
+    const action = isVerified ? 'unverify' : 'verify';
+    await apiFetch(`/admin/providers/${id}/${action}`, { method: 'POST' });
+    loadProviders();
+  }
+  window.toggleVerify = toggleVerify;
+
+  window.onLangChange = function(lang) {
+    renderTransactions();
+    renderPending();
+    renderProviders();
+    renderSupportMessages();
+    renderReviews();
+  };
+
+  document.getElementById('pwForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl = document.getElementById('pwError');
+    const okEl = document.getElementById('pwSuccess');
+    errEl.textContent = ''; okEl.textContent = '';
+    try {
+      const result = await apiFetch('/auth/change-password', {
+        method: 'POST',
+        body: JSON.stringify({
+          currentPassword: document.getElementById('currentPassword').value,
+          newPassword: document.getElementById('newPassword').value,
+        }),
+      });
+      okEl.textContent = result.message;
+      document.getElementById('pwForm').reset();
+    } catch (err) {
+      errEl.textContent = err.message;
+    }
+  });
+
+  let lastSupportMessages = null;
+
+  function supportStatusLabel(status) {
+    return status === 'resolved' ? t('support_status_resolved') : t('support_status_open');
+  }
+
+  function renderSupportMessages() {
+    const list = document.getElementById('supportList');
+    if (!lastSupportMessages) return;
+    if (lastSupportMessages.length === 0) {
+      list.innerHTML = `<p style="color:var(--text-muted);">${t('dash_admin_support_none')}</p>`;
+      return;
+    }
+    list.innerHTML = lastSupportMessages.map(m => `
+      <div class="provider-card" id="support-${m.id}" style="flex-direction:column; align-items:stretch;">
+        <div style="margin-bottom:10px;">
+          <div class="name">${m.full_name} <span class="meta">(${m.sender_role}, ${m.email}, ${m.phone})</span> ${m.status === 'resolved' ? `<span class="badge badge-verified">${supportStatusLabel(m.status)}</span>` : `<span class="badge badge-trial">${supportStatusLabel(m.status)}</span>`}</div>
+          <div class="meta" style="margin-top:6px;">${new Date(m.created_at).toLocaleString()}</div>
+          <div style="margin-top:8px;">${m.message}</div>
+          ${m.admin_reply ? `<div class="meta" style="color:var(--accent-2); margin-top:8px;"><strong>${t('support_admin_reply')}:</strong> ${m.admin_reply}</div>` : ''}
+        </div>
+        ${m.status === 'open' ? `
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <input type="text" id="reply-input-${m.id}" placeholder="${t('dash_admin_reply_placeholder')}" style="flex:1; min-width:160px;">
+            <button class="btn btn-primary" onclick="sendSupportReply(${m.id})">${t('dash_admin_reply_send')}</button>
+          </div>
+        ` : `
+          <button class="btn btn-outline" onclick="reopenSupportMessage(${m.id})" style="align-self:flex-start;">${t('dash_admin_reopen')}</button>
+        `}
+      </div>
+    `).join('');
+  }
+
+  function loadSupportMessages() {
+    apiFetch('/support').then(rows => {
+      lastSupportMessages = rows;
+      renderSupportMessages();
+    }).catch(() => {});
+  }
+
+  async function sendSupportReply(id) {
+    const input = document.getElementById('reply-input-' + id);
+    if (!input.value.trim()) return;
+    try {
+      await apiFetch(`/support/${id}/reply`, { method: 'POST', body: JSON.stringify({ reply: input.value.trim() }) });
+      loadSupportMessages();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+  window.sendSupportReply = sendSupportReply;
+
+  async function reopenSupportMessage(id) {
+    try {
+      await apiFetch(`/support/${id}/reopen`, { method: 'POST' });
+      loadSupportMessages();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+  window.reopenSupportMessage = reopenSupportMessage;
+
+  let lastReviews = null;
+
+  function renderReviews() {
+    const list = document.getElementById('reviewsList');
+    if (!lastReviews) return;
+    if (lastReviews.length === 0) {
+      list.innerHTML = `<p style="color:var(--text-muted);">${t('dash_admin_reviews_none')}</p>`;
+      return;
+    }
+    list.innerHTML = lastReviews.map(r => `
+      <div class="provider-card" id="review-${r.id}" style="flex-direction:column; align-items:stretch;">
+        <div style="margin-bottom:10px;">
+          <div class="name">${r.reviewer_name} (${r.reviewer_role}) → ${r.reviewee_name}</div>
+          <div class="rating-line" style="margin:6px 0;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+          ${r.comment ? `<div>${r.comment}</div>` : ''}
+          <div class="meta" style="margin-top:6px;">${new Date(r.created_at).toLocaleString()}</div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-primary" onclick="approveReview(${r.id})">${t('btn_confirm')}</button>
+          <button class="btn btn-outline" onclick="rejectReview(${r.id})">${t('btn_reject')}</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function loadReviews() {
+    apiFetch('/reviews/pending').then(rows => {
+      lastReviews = rows;
+      renderReviews();
+    }).catch(() => {});
+  }
+
+  async function approveReview(id) {
+    await apiFetch(`/reviews/${id}/approve`, { method: 'POST' });
+    document.getElementById('review-' + id).remove();
+  }
+  async function rejectReview(id) {
+    await apiFetch(`/reviews/${id}/reject`, { method: 'POST' });
+    document.getElementById('review-' + id).remove();
+  }
+  window.approveReview = approveReview;
+  window.rejectReview = rejectReview;
+
+  if (user) { loadStats(); loadTransactions(); loadPending(); loadProviders(); loadSupportMessages(); loadReviews(); }
+</script>
+</body>
+</html>

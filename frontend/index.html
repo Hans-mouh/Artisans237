@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artisans237 — Trouvez un plombier, électricien, mécanicien au Cameroun</title>
+<meta name="description" content="Artisans237 connecte clients et artisans vérifiés (plomberie, électricité, mécanique, et plus) à Yaoundé, Douala, Bafoussam, Bamenda et partout au Cameroun. Contact direct, sans intermédiaire.">
+<link rel="canonical" href="https://frontend237.netlify.app/">
+
+<!-- Open Graph — controls how this page looks when shared or used in a Facebook/Instagram ad -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Artisans237">
+<meta property="og:title" content="Artisans237 — Trouvez des artisans de confiance partout au Cameroun.">
+<meta property="og:description" content="Trouvez plombiers, électriciens, mécaniciens et plus — inscrits, localisés, et prêts à discuter de votre besoin directement.">
+<meta property="og:url" content="https://frontend237.netlify.app/">
+<meta property="og:image" content="https://frontend237.netlify.app/assets/hero.jpg">
+<meta property="og:locale" content="fr_FR">
+
+<!-- Twitter/X card, harmless to include even if unused -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Artisans237 — Trouvez des artisans de confiance partout au Cameroun.">
+<meta name="twitter:description" content="Trouvez plombiers, électriciens, mécaniciens et plus au Cameroun.">
+<meta name="twitter:image" content="https://frontend237.netlify.app/assets/hero.jpg">
+
+<link rel="stylesheet" href="css/style.css">
+
+<!-- Structured data: tells Google this is a local service business, not just a generic page -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Artisans237",
+  "description": "Plateforme connectant clients et prestataires de services locaux vérifiés au Cameroun.",
+  "url": "https://frontend237.netlify.app/",
+  "areaServed": {
+    "@type": "Country",
+    "name": "Cameroon"
+  },
+  "image": "https://frontend237.netlify.app/assets/logo.png"
+}
+</script>
+
+<!--
+  META PIXEL — leave this commented out until you have a real Pixel ID from
+  Meta Events Manager (Business Manager > Events Manager > Connect Data > Web).
+  Once you have it, replace YOUR_PIXEL_ID below on ALL pages you want tracked
+  (usually just this one is enough to start — Meta Pixel only needs to load
+  once per visit to track that visit).
+
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', 'YOUR_PIXEL_ID');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"
+  /></noscript>
+
+  After adding your real Pixel ID and un-commenting: open Meta Events Manager
+  with the Pixel Helper Chrome extension to confirm it fires, then click
+  "Activate Conversions API" in Events Manager — no server code needed for
+  the one-click version.
+-->
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <div class="logo-slot" id="logoSlot"><img src="assets/logo.png" alt="logo" onerror="this.style.display='none'; this.parentElement.textContent='LOGO';"></div>
+    <div class="brand-name">Artisans<span>237</span></div>
+  </div>
+  <nav class="main-nav">
+    <a href="index.html" data-i18n="nav_home">Home</a>
+    <a href="providers.html" data-i18n="nav_find">Find a service</a>
+    <a href="pricing.html" data-i18n="nav_pricing">Pro pricing</a>
+    <a href="register.html?role=provider" data-i18n="nav_become">Become a provider</a>
+  </nav>
+  <div class="header-actions">
+    <div class="lang-toggle"><button data-lang="fr" onclick="setLang('fr')">FR</button><button data-lang="en" onclick="setLang('en')">EN</button></div>
+    <a href="login.html" id="navLogin" class="btn btn-outline" data-i18n="nav_login">Log in</a>
+    <a href="#" id="navDashboard" class="btn btn-primary" style="display:none;" data-i18n="nav_dashboard">Dashboard</a>
+  </div>
+</header>
+
+<section class="hero-grid">
+  <div class="hero-text">
+    <span class="country-badge" data-i18n="hero_badge">🇨🇲 Now active in Cameroon</span>
+    <h1><span data-i18n="hero_title_1">Find trusted artisans</span><br><span data-i18n="hero_title_2">everywhere in Cameroon.</span></h1>
+    <p data-i18n="hero_sub">Find plumbers, electricians, mechanics and more — registered, located, and ready to discuss your job directly.</p>
+
+    <div class="hero-search">
+      <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" fill="none"><circle cx="11" cy="11" r="7" stroke="#8C93A3" stroke-width="2"/><path d="M20 20 L16.5 16.5" stroke="#8C93A3" stroke-width="2" stroke-linecap="round"/></svg>
+      <input type="text" id="heroQuery" data-i18n-placeholder="hero_query_ph" placeholder="Search for a trade, name, or skill...">
+      <select id="heroTown" class="hero-search-select"><option value="" data-i18n="hero_town_any">Any town</option></select>
+      <select id="heroQuarter" class="hero-search-select"><option value="" data-i18n="hero_quarter_any">Any neighborhood</option></select>
+      <button class="search-submit-btn" id="heroSearchBtn" aria-label="Search">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><circle cx="11" cy="11" r="7" stroke="#fff" stroke-width="2"/><path d="M20 20 L16.5 16.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <select id="heroCategory" style="display:none;"><option value="" data-i18n="hero_cat_all">All categories</option></select>
+  </div>
+
+  <div class="img-slot hero-bordered">
+    <img src="assets/hero.jpg" alt="A provider at work" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="img-placeholder">Add <code>hero.jpg</code> to <code>/assets/</code> — see assets/README.md</div>
+  </div>
+</section>
+
+<section class="section container">
+  <div class="trust-bar">
+    <div class="trust-item">
+      <svg viewBox="0 0 64 64" fill="none" width="32" height="32"><path d="M32 6 L52 14 V30 C52 44 42 52 32 58 C22 52 12 44 12 30 V14 Z" stroke="#E8703A" stroke-width="3"/><path d="M24 32 L30 38 L42 24" stroke="#2F6FED" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span data-i18n="trust_1">Verified providers, checked by an admin</span>
+    </div>
+    <div class="trust-item">
+      <svg viewBox="0 0 64 64" fill="none" width="32" height="32"><circle cx="22" cy="32" r="10" stroke="#2F6FED" stroke-width="3"/><circle cx="42" cy="32" r="10" stroke="#E8703A" stroke-width="3"/></svg>
+      <span data-i18n="trust_2">Direct contact — no middlemen, no commission on your job price</span>
+    </div>
+    <div class="trust-item">
+      <svg viewBox="0 0 64 64" fill="none" width="32" height="32"><rect x="14" y="22" width="36" height="24" rx="4" stroke="#2F6FED" stroke-width="3"/><path d="M14 30 H50" stroke="#E8703A" stroke-width="3"/></svg>
+      <span data-i18n="trust_3">MTN Mobile Money — confirmed manually, no card details needed</span>
+    </div>
+  </div>
+</section>
+
+<section class="section container">
+  <h2 class="section-title" data-i18n="section_browse_title">Browse by trade</h2>
+  <p class="section-sub" data-i18n="section_browse_sub">Tap a card to see everyone registered nearby.</p>
+  <div class="category-grid" id="categoryGrid"></div>
+</section>
+
+<section class="section container">
+  <h2 class="section-title" data-i18n="section_work_title">Real work, real providers</h2>
+  <p class="section-sub" data-i18n="section_work_sub">A look at the kind of jobs handled on Artisans237.</p>
+  <div class="marquee-wrap">
+    <div class="marquee-row dir-left" id="marqueeRow1"></div>
+  </div>
+  <div class="marquee-wrap">
+    <div class="marquee-row dir-right" id="marqueeRow2"></div>
+  </div>
+</section>
+
+<section class="section container">
+  <h2 class="section-title" data-i18n="section_how_title">How it works</h2>
+  <p class="section-sub" data-i18n="section_how_sub">Three simple steps to get help.</p>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">STEP 1</div>
+      <h3 data-i18n="step1_title">Choose a service</h3>
+      <p data-i18n="step1_desc">Plumbing, electrical, mechanics and more — find the category that matches what you need.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">STEP 2</div>
+      <h3 data-i18n="step2_title">Compare nearby providers</h3>
+      <p data-i18n="step2_desc">See who's registered in your town and neighborhood, with their trade and a short bio.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">STEP 3</div>
+      <h3 data-i18n="step3_title">Request with confidence</h3>
+      <p data-i18n="step3_desc">Send your request with your contact info. The provider accepts, and you connect directly.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section container">
+  <h2 class="section-title" data-i18n="section_towns_title">Available across Cameroon</h2>
+  <p class="section-sub" data-i18n="section_towns_sub">Pick a town to see its neighborhoods — providers are welcome to register in any of them.</p>
+  <div class="town-tabs" id="townTabs"></div>
+  <div class="chip-row" id="quarterChips"></div>
+</section>
+
+<section class="section container">
+  <h2 class="section-title" data-i18n="section_reviews_title">What our users say</h2>
+  <div id="testimonialArea"></div>
+</section>
+
+<section class="section container" style="text-align:center; color:var(--text-muted);">
+  <p data-i18n="cta_new_here">New here? <a href="register.html">Create an account</a> as a customer, or <a href="register.html?role=provider">register your trade</a> — providers get a free trial before any subscription is due.</p>
+</section>
+
+<footer class="site-footer">
+  <div>
+    <a href="terms.html" data-i18n="footer_terms">Terms of Service</a> · <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+  </div>
+  <p>&copy; <span id="year"></span> Artisans237. <span data-i18n="footer_made">Made for Cameroon.</span></p>
+</footer>
+
+<script src="js/towns-data.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+<script src="js/categories.js"></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Two-row marquee: 16 unique photos (gallery-1.jpg .. gallery-16.jpg), 8 per row.
+  // Each row's list is duplicated once so the CSS animation (translateX 0 -> -50%)
+  // loops seamlessly with no visible jump. Missing files just show an empty
+  // placeholder tile at the same fixed size — see assets/README.md.
+  function buildMarqueeRow(containerId, filenames) {
+    const container = document.getElementById(containerId);
+    const renderSet = () => filenames.map(f => `
+      <div class="marquee-item">
+        <img src="assets/${f}" alt="" onerror="this.style.display='none';">
+      </div>
+    `).join('');
+    container.innerHTML = renderSet() + renderSet();
+  }
+  buildMarqueeRow('marqueeRow1', Array.from({ length: 8 }, (_, i) => `gallery-${i + 1}.jpg`));
+  buildMarqueeRow('marqueeRow2', Array.from({ length: 8 }, (_, i) => `gallery-${i + 9}.jpg`));
+
+  let lastCategories = null; // cache so language toggle doesn't re-fetch the API
+
+  function renderCategoriesForLang(lang) {
+    renderCategoryGrid(document.getElementById('categoryGrid'), lang, lastCategories || window.DEFAULT_CATEGORIES);
+  }
+
+  let lastTestimonials = null;
+
+  function renderTestimonialsForLang(lang) {
+    const area = document.getElementById('testimonialArea');
+    if (!lastTestimonials || lastTestimonials.length === 0) {
+      area.innerHTML = `<div class="testimonial-empty">${t('testimonial_empty')}</div>`;
+      return;
+    }
+    area.innerHTML = `<div class="testimonial-grid">${lastTestimonials.map(r => `
+      <div class="testimonial-card">
+        <div class="rating-line" style="margin-bottom:8px;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+        <p>"${r.comment}"</p>
+        <div class="who">${r.reviewer_name}${r.reviewer_role === 'provider' ? ' (' + t('badge_provider_label') + ')' : ''}</div>
+      </div>
+    `).join('')}</div>`;
+  }
+
+  function loadTestimonials() {
+    apiFetch('/reviews/recent').then(rows => {
+      lastTestimonials = rows;
+      renderTestimonialsForLang(getLang());
+    }).catch(() => {
+      renderTestimonialsForLang(getLang());
+    });
+  }
+  loadTestimonials();
+
+  function renderTownsForLang() {
+    // Town/quarter names are real proper nouns — they don't change between languages,
+    // only the active-tab styling needs to persist on re-render.
+    const townTabsEl = document.getElementById('townTabs');
+    const chipsEl = document.getElementById('quarterChips');
+    const townNames = Object.keys(window.TOWNS_DATA).sort();
+    const activeTown = townTabsEl.querySelector('button.active')?.textContent || townNames[0];
+
+    townTabsEl.innerHTML = '';
+    townNames.forEach(town => {
+      const btn = document.createElement('button');
+      btn.textContent = town;
+      if (town === activeTown) btn.classList.add('active');
+      btn.addEventListener('click', () => {
+        townTabsEl.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        chipsEl.innerHTML = window.TOWNS_DATA[town].map(q => `<span class="chip">${q}</span>`).join('');
+      });
+      townTabsEl.appendChild(btn);
+    });
+    chipsEl.innerHTML = window.TOWNS_DATA[activeTown].map(q => `<span class="chip">${q}</span>`).join('');
+  }
+
+  // Called automatically by i18n.js whenever the language toggle is used.
+  window.onLangChange = function(lang) {
+    renderCategoriesForLang(lang);
+    renderTestimonialsForLang(lang);
+  };
+
+  // Populate hero search + category cards with live data from the API
+  apiFetch('/providers/categories').then(cats => {
+    lastCategories = cats;
+    const sel = document.getElementById('heroCategory');
+    cats.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id; opt.textContent = c.label_en;
+      sel.appendChild(opt);
+    });
+    renderCategoriesForLang(getLang());
+  }).catch(() => {
+    renderCategoriesForLang(getLang());
+  });
+
+  wireLocationDropdowns(document.getElementById('heroTown'), document.getElementById('heroQuarter'));
+  renderTownsForLang();
+
+  function runHeroSearch() {
+    const query = document.getElementById('heroQuery').value.trim();
+    const town = document.getElementById('heroTown').value;
+    const quarter = document.getElementById('heroQuarter').value;
+    const params = new URLSearchParams();
+    if (query) params.set('q', query);
+    if (town) params.set('town', town);
+    if (quarter && quarter !== '__other__') params.set('quarter', quarter);
+    window.location.href = 'providers.html?' + params.toString();
+  }
+  document.getElementById('heroSearchBtn').addEventListener('click', runHeroSearch);
+  document.getElementById('heroQuery').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') runHeroSearch();
+  });
+
+  // Nav state
+  const user = getUser();
+  if (user) {
+    document.getElementById('navLogin').style.display = 'none';
+    const dash = document.getElementById('navDashboard');
+    dash.style.display = 'inline-block';
+    dash.href = user.role === 'provider' ? 'dashboard-provider.html' : (user.role === 'admin' ? 'dashboard-admin.html' : 'dashboard-customer.html');
+  }
+</script>
+</body>
+</html>
