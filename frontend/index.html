@@ -73,7 +73,7 @@
 
 <header class="site-header">
   <div class="brand">
-    <div class="logo-slot" id="logoSlot"><img src="assets/logo.png" alt="logo" onerror="this.style.display='none'; this.parentElement.textContent='LOGO';"></div>
+    <div class="logo-slot" id="logoSlot"><img src="https://collection.cloudinary.com/kfs7qgsa/f8a8cd50df9deadd6fd4df5a2027ec9c.jpg" alt="logo" onerror="this.style.display='none'; this.parentElement.textContent='LOGO';"></div>
     <div class="brand-name">Artisans<span>237</span></div>
   </div>
   <nav class="main-nav">
@@ -108,7 +108,7 @@
   </div>
 
   <div class="img-slot hero-bordered">
-    <img src="assets/hero.jpg" alt="A provider at work" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <img src="https://collection.cloudinary.com/kfs7qgsa/da5dd56d8fbf27183e770c9a35f4fc51.jpg" alt="A provider at work" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
     <div class="img-placeholder">Add <code>hero.jpg</code> to <code>/assets/</code> — see assets/README.md</div>
   </div>
 </section>
@@ -212,8 +212,9 @@
     `).join('');
     container.innerHTML = renderSet() + renderSet();
   }
-  buildMarqueeRow('marqueeRow1', Array.from({ length: 8 }, (_, i) => `gallery-${i + 1}.jpg`));
-  buildMarqueeRow('marqueeRow2', Array.from({ length: 8 }, (_, i) => `gallery-${i + 9}.jpg`));
+ const CLOUD = 'https://res.cloudinary.com/kfs7qgsa/image/upload/'; 
+  buildMarqueeRow('marqueeRow1', ['https://collection.cloudinary.com/kfs7qgsa/27209a1da4c042e55fad55f16accaf65.jpg','https://collection.cloudinary.com/kfs7qgsa/25d90ad28666023565214fc7d5c43854.jpg','https://collection.cloudinary.com/kfs7qgsa/ca11354bb3439f7d7fa2986f904d6d0f.jpg','https://collection.cloudinary.com/kfs7qgsa/1b09882a779fff602835bf7861387d16.jpg','https://collection.cloudinary.com/kfs7qgsa/0ee4b39601f95a0e8780d65e34582e25.jpg','https://collection.cloudinary.com/kfs7qgsa/1b1a2070a338c4b7cad690a904951c08.jpg','https://collection.cloudinary.com/kfs7qgsa/1d8595b31c1b3b311f3578be4469e6b4.jpg','https://collection.cloudinary.com/kfs7qgsa/fd4e5fb3648b53f88a429d808de9dfee.jpg'].map(f => CLOUD + f)); 
+  buildMarqueeRow('marqueeRow2', ['https://collection.cloudinary.com/kfs7qgsa/fe8e7b62cbe3da7b141bd89fb2a394c9.jpg','https://collection.cloudinary.com/kfs7qgsa/ee97855930cc22cdf50a2dff127344ef.jpg','https://collection.cloudinary.com/kfs7qgsa/b008971be7e0f68679fa252922f5c110.jpg','https://collection.cloudinary.com/kfs7qgsa/1666a2bcc2f3331d8082d88418d55958.jpg','https://collection.cloudinary.com/kfs7qgsa/aed8d939314c69a868761ee128f3dc8f.jpg','https://collection.cloudinary.com/kfs7qgsa/35a2d56d906565081d7a9e966875abed.jpg','https://collection.cloudinary.com/kfs7qgsa/0d28ed96781e0d2bef8dd100ffb8f58c.jpg','https://collection.cloudinary.com/kfs7qgsa/f1fc14d4b6bb34fe7a28128b08065c5c.jpg'].map(f => CLOUD + f));
 
   let lastCategories = null; // cache so language toggle doesn't re-fetch the API
 
